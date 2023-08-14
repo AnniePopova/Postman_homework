@@ -478,11 +478,6 @@ pm.test('Schema is valid', function () {
 ===============
 ***
 1) получить список валют:
-let currency_ = pm.response.json();
-for (item in currency_) {
-console.log(currency_[item]); 
-};
-
 2) итерировать список валют
 3) в каждой итерации отправлять запрос на сервер для получения курса каждой валюты
 4) если возвращается 500 код, переходим к следующей итреации
@@ -498,37 +493,17 @@ console.log(currency_[item]);
 }
 7) переходим к следующей итерации
 
-let res = pm.response.json();
-var arr_len = res.length
+let currency_ = pm.response.json();
+for (item in currency_) {
+console.log(currency_[item]); 
+};
 
-var min = Math.ceil(0);
-var max = Math.floor(arr_len)
-var ran = Math.floor(Math.random() * (max - min)) + min;
-pm.environment.set("Cur_ID", res[ran].Cur_ID)
+let s = pm.response.json();
 
-var cur_id = 0;
-var tok = pm.environment.get("token")  
-
-for(let i = 0; i < arr_len; i++){
-    cur_id = res[i].Cur_ID;
-    const regRequest = {
-        'method': 'POST',
-        'url': 'http://162.55.220.72:5005/curr_byn',
-        'body': {
-            'mode': 'formdata',
-            'formdata': [
-                {'key': 'auth_token', 'value': tok},
-                {'key': 'curr_code', 'value': cur_id}
-            ]
-        }
-    };
-    pm.sendRequest(regRequest, (error, response) => {
-        if(response.code == 200){
-            var resp = response.json();
-            if(pm.expect(resp).have.to.property("Cur_OfficialRate")){
-                console.log(resp)
-            };
-        }
-    });
-}
-
+for (let i = 0; i < s.length; i++) {
+  if (pm.response.to.have.status(200)){
+       if (pm.response.to.haveOwnProperty('Cur_OfficialRate')) {
+           console.log(s[i])
+       };
+  }
+    }
